@@ -536,7 +536,6 @@ cat >! input.nml <<EOF
        xkzm_h         = 1.0
        cloud_gfdl     = .true.
        do_ocean       = .false.
-       sfc_coupled    = .true.
        fixed_date     = .true.
        fixed_solhr    = .true.
        fixed_sollat   = .true.
