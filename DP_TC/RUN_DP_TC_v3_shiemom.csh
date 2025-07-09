@@ -14,7 +14,6 @@
 # https://docs.google.com/presentation/d/1DZ3vk96gJ_ETbtRxSWxbdSnP7xBgagBkslnJr-g_lMM/edit#slide=id.p
 
 set echo
-
 echo "Cluster: $SLURM_CLUSTER_NAME"
 
 if (${SLURM_CLUSTER_NAME} == "c6") then
@@ -29,6 +28,14 @@ set BASE_DIR    = "/gpfs/f5/gfdl_w/scratch/Joseph.Mouallem/test/"               
 set BUILD_DIR = "~${USER}/shiemom_clean/pubrelease_c5/SHiELD_build/"                  # Build directory - To be set
 set INPUT_DATA = "/gpfs/f5/gfdl_w/proj-shared/SHiELD_INPUT_DATA/"
 set MOSAIC_DATA = "/gpfs/f5/gfdl_w/world-shared/Joseph.Mouallem/shiemom_pdata/INPUT/"
+endif
+
+
+if (${SLURM_CLUSTER_NAME} == "stellar") then
+set BASE_DIR    = "/scratch/cimes/mouallem/shiemom_runs/"
+set BUILD_DIR = "~${USER}/test/newcode/SHiELD_build/"
+set INPUT_DATA = "/scratch/cimes/mouallem/from_gaea/TEMP_INPUT/"
+set MOSAIC_DATA = "/scratch/cimes/mouallem/from_gaea/shiemom_pdata/INPUT/"
 endif
 
 unset echo
@@ -61,6 +68,10 @@ set HYPT = "on"         # choices:  on, off  (controls hyperthreading)
 set COMP = "repro"       # choices:  debug, repro, prod
 set NO_SEND = "no_send" # choices:  send, no_send
 set EXE  = "intel.x"
+
+if (${SLURM_CLUSTER_NAME} == "stellar") then
+  set HYPT = "on"         # choices:  on, off  (controls hyperthreading)
+endif
 
 # directory structure
 set WORKDIR    = ${BASE_DIR}/${RELEASE}/${DATE}.${CASE}.${TYPE}.${MODE}.${MONO}.${MEMO}/
@@ -200,6 +211,10 @@ else
 # when running with threads, ned to use the following command
 @ npes = ${layout_x} * ${layout_y} 
 set run_cmd = "srun --ntasks=$npes --cpus-per-task=$skip ./$executable:t"
+
+if (${SLURM_CLUSTER_NAME} == "stellar") then
+   set run_cmd = "srun --label --ntasks=$npes --export=ALL --cpus-per-task=$skip --cpu-bind=cores ./$executable:t"
+endif
 
 setenv SLURM_CPU_BIND verbose
 setenv MPICH_ENV_DISPLAY
