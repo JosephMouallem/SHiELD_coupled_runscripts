@@ -275,7 +275,7 @@ EOF
 cat ${DIAG_TABLE} >> diag_table
 
 # copy over the other tables and executable
-cp ${RUN_DIR}/data_table data_table
+cp ${RUN_DIR}/tables/data_table data_table
 cp ${FIELD_TABLE} field_table
 cp $executable .
 
