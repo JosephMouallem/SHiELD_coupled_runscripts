@@ -73,8 +73,8 @@ set FIX  = ${INPUT_DATA}/fix.v201810
 set GFS  = ${INPUT_DATA}/GFS_STD_INPUT.20160311.tar
 
 if (${SLURM_CLUSTER_NAME} == "c6") then
-set ICS = /gpfs/f6/bil-coastal-gfdl/scratch/Joseph.Mouallem/UFS_OUT/PRETOOLS/IC/C${res}/${NAME}_IC/
-set GRID = /gpfs/f6/bil-coastal-gfdl/scratch/Joseph.Mouallem/UFS_OUT/PRETOOLS/my_grids/C${res}/C${res}/ 
+set ICS = /gpfs/f6/bil-coastal-gfdl/proj-shared/Joseph.Mouallem/shiemom_pdata/Ortho_Helene/IC/C${res}/${NAME}_IC/
+set GRID = /gpfs/f6/bil-coastal-gfdl/proj-shared/Joseph.Mouallem/shiemom_pdata/Ortho_Helene/my_grids/C${res}/C${res}/ 
 endif
 
 if (${SLURM_CLUSTER_NAME} == "c5") then
