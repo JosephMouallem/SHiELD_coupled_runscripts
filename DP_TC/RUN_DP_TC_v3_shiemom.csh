@@ -366,7 +366,7 @@ cat >! input.nml <<EOF
  &atmos_model_nml
        dycore_only = $dycore_only
        fdiag = $fdiag
-       fullcoupler_fluxes = .true.
+       fullcoupler_fluxes = 1
        debug = .false.
 /
 

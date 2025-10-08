@@ -394,7 +394,7 @@ cat >! input.nml <<EOF
      chksum_debug = $chksum_debug
      dycore_only = $dycore_only
      fdiag = $fdiag
-     fullcoupler_fluxes=.false.
+     fullcoupler_fluxes=1
 /
 
 &diag_manager_nml

@@ -91,7 +91,7 @@ set DIAG_TABLE  = ${RUN_DIR}/tables/diag_table_6species_tc_dp_ocean
 set FIELD_TABLE = ${RUN_DIR}/tables/field_table_6species_atmland # will be changed later if tke-edmf is used
 
 set layout_x = "18"
-set layout_y = "16" 
+set layout_y = "16"
 set io_layout = "1,1"
 set nthreads = "4"
 
@@ -461,7 +461,7 @@ cat >! input.nml <<EOF
 /
 
  &monin_obukhov_nml
-       neutral = .true. ! KGao: should not use true for coupled mode
+       neutral = .false. ! KGao: should not use true for coupled mode
 /
 
  &ocean_albedo_nml
@@ -493,7 +493,7 @@ cat >! input.nml <<EOF
      chksum_debug = $chksum_debug
      dycore_only = $dycore_only
      fdiag = $fdiag
-     fullcoupler_fluxes=.true.
+     fullcoupler_fluxes=1
 /
 
 &diag_manager_nml
