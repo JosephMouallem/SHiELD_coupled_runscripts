@@ -5,7 +5,7 @@
 "nggps2d",                1,  "hours",     1, "hours", "time"
 "ocean",                  1, "hours",     1, "days", "time"
 "fluxes",                 1, "hours",     1, "days", "time"
-"mixing",            1, "hours",     1, "days", "time"
+"mixing",                 1, "hours",     1, "days", "time"
 
 #"ocean_daily",            1, "days",   1, "days", "time"
 #"nggps3d",                3,  "hours",     1, "days",  "time", 
@@ -30,8 +30,8 @@
 # "flux",  "evap",       "lhflx",      "fluxes", "all", .false.,  "none", 2
 # "flux",  "tau_x",      "tau_x",      "fluxes", "all", .false.,  "none", 2
 # "flux",  "tau_y",      "tau_y",      "fluxes", "all", .false.,  "none", 2
- "flux",  "u_ref",      "u_ref",      "fluxes", "all", .false.,  "none", 2
- "flux",  "v_ref",      "v_ref",      "fluxes", "all", .false.,  "none", 2
+# "flux",  "u_ref",      "u_ref",      "fluxes", "all", .false.,  "none", 2
+# "flux",  "v_ref",      "v_ref",      "fluxes", "all", .false.,  "none", 2
  "flux",  "wind",       "wind",       "fluxes", "all", .false.,  "none", 2
  "flux",  "rough_mom",  "rough_mom",  "fluxes", "all", .false.,  "none", 2
  "flux",  "rough_heat", "rough_heat", "fluxes", "all", .false.,  "none", 2
@@ -92,8 +92,8 @@
  "dynamics", "grid_lat", "grid_lat", "grid_spec", "all", .false.,  "none", 2,
  "dynamics", "grid_lont", "grid_lont", "grid_spec", "all", .false.,  "none", 2,
  "dynamics", "grid_latt", "grid_latt", "grid_spec", "all", .false.,  "none", 2,
-# "dynamics", "dx",        "dx", "grid_spec", "all", .false.,  "none", 2,
-# "dynamics", "dy",        "dy", "grid_spec", "all", .false.,  "none", 2,
+ "dynamics", "dx",        "dx", "grid_spec", "all", .false.,  "none", 2,
+ "dynamics", "dy",        "dy", "grid_spec", "all", .false.,  "none", 2,
  "dynamics", "area",     "area",     "grid_spec", "all", .false.,  "none", 2,
 ###
 # hourly output
