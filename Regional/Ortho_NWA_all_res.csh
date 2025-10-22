@@ -1,9 +1,9 @@
 #!/bin/tcsh
 #SBATCH --output=./stdout/%x.%j
-#SBATCH --job-name=Ortho_NWA_shiemom
+#SBATCH --job-name=Ortho_NWA3km_shiemom
 #SBATCH --clusters=c6
 #SBATCH --time=07:30:00
-#SBATCH --nodes=40
+#SBATCH --nodes=20
 
 # Script to run Regional SHiELD+MOM6 over the NWA region
 # accepted resolution: 25km, 6km, 3km, Starting date: Sept, 20, 2024
@@ -17,6 +17,7 @@ set echo
 # NEEDS TO BE SET
 ################################
 set res = 384 # 25km
+set res = 738 # 13km
 #set res = 1600 # 6km
 #set res = 3200 # 3km
 #set res = 9600 # 1km
@@ -46,7 +47,7 @@ if ( ! $?COMPILER ) then
   set COMPILER = "intel"
 endif
 
-set RELEASE = "SHiEMOM/Ortho_NWA/"
+set RELEASE = "SHiEMOM/Ortho_NWA_validation/"
 
 # case specific details
 set TYPE = "nh"          # choices:  nh, hydro
@@ -58,7 +59,6 @@ if (${res} == 9600) then
 set NAME = "20240926.00Z"
 endif
 set MEMO = "$SLURM_JOB_NAME.res$res"
-set MEMO = "$SLURM_JOB_NAME.res$res.highresoceantopo_1atm_3ocn_test"
 set PBL  = "TKE"        # choices:  TKE or YSU
 set HYPT = "on"         # choices:  on, off  (controls hyperthreading)
 set COMP = "repro"       # choices:  debug, repro, prod
@@ -73,8 +73,12 @@ set FIX  = ${INPUT_DATA}/fix.v201810
 set GFS  = ${INPUT_DATA}/GFS_STD_INPUT.20160311.tar
 
 if (${SLURM_CLUSTER_NAME} == "c6") then
-set ICS = /gpfs/f6/bil-coastal-gfdl/proj-shared/Joseph.Mouallem/shiemom_pdata/Ortho_Helene/IC/C${res}/${NAME}_IC/
-set GRID = /gpfs/f6/bil-coastal-gfdl/proj-shared/Joseph.Mouallem/shiemom_pdata/Ortho_Helene/my_grids/C${res}/C${res}/ 
+  set ICS = /gpfs/f6/bil-coastal-gfdl/proj-shared/Joseph.Mouallem/shiemom_pdata/INPUT/Regional_validation/NWA_A3km/IC/C${res}/${NAME}_IC/
+  set GRID = /gpfs/f6/bil-coastal-gfdl/proj-shared/Joseph.Mouallem/shiemom_pdata/INPUT/Regional_validation/NWA_A3km/GRID/C${res}/C${res}/
+  if (${res} == "9600") then
+    set ICS = /gpfs/f6/bil-coastal-gfdl/proj-shared/Joseph.Mouallem/shiemom_pdata/Ortho_Helene/IC/C${res}/${NAME}_IC/
+    set GRID = /gpfs/f6/bil-coastal-gfdl/proj-shared/Joseph.Mouallem/shiemom_pdata/Ortho_Helene/my_grids/C${res}/C${res}/ 
+  endif
 endif
 
 if (${SLURM_CLUSTER_NAME} == "c5") then
@@ -99,23 +103,38 @@ switch ($res) #assuming domain size=10deg, need to adjust timestep, move it here
 case "384":
    set npx = "255" #halo0
    set npy = "125"
-   set k_split = "2"
-   set n_split = "10"
-   set dt_atmos = "360"
+   set npx = "247" #halo0 NWA_A
+   set npy = "123"
+   set k_split = "1"
+   set n_split = "5"
+   set dt_atmos = "180"
+   breaksw
+case "738":
+   set npx = "483" #halo0
+   set npy = "244"
+   set k_split = "1"
+   set n_split = "8"
+   set dt_atmos = "180"
+   set layout_x = "30"
+   set layout_y = "30"
    breaksw
 case "1600":
    set npx = "1057" #halo0
    set npy = "541"
-   set k_split = "8"
-   set n_split = "10"
-   set dt_atmos = "360"
+   set k_split = "2"
+   set n_split = "8"
+   set dt_atmos = "180"
+   set layout_x = "60"
+   set layout_y = "60"
    breaksw
 case "3200":
    set npx = "2124"
    set npy = "1091"
-   set k_split = "8"
-   set n_split = "10"
+   set k_split = "5"
+   set n_split = "8"
    set dt_atmos = "180"
+   set layout_x = "120"
+   set layout_y = "120"
    breaksw
 case "9600":
    set npx = "2391"
@@ -123,6 +142,8 @@ case "9600":
    set k_split = "8"
    set n_split = "10"
    set dt_atmos = "180"
+   set layout_x = "120"
+   set layout_y = "120"
 endsw
 
 @ NIGLOBAL = ${npx} - 1 #remove the corners
@@ -138,8 +159,8 @@ set blocksize = "32"
 
 # run length
 set months = "0"
-set days = "2"
-set hours = "0" 
+set days = "9"
+set hours = "1"
 set minutes = "0"
 set seconds = "0"
 
@@ -348,8 +369,6 @@ ln -sf $FIX/global_mxsnoalb.uariz.t1534.3072.1536.rg.grb INPUT/
 cp ${RUN_DIR}/MOMSIS_INPUTFILES/MOM_input .
 cp ${RUN_DIR}/MOMSIS_INPUTFILES/SIS_input .
 ############### copy ocean and mosaic files
-#cp ${GRID}/ocean_and_mosaic/* INPUT/.
-#cp ${GRID}/ocean_and_mosaic_highres/* INPUT/.
 ln -sf ${GRID}/ocean_and_mosaic_highres/* INPUT/
 if (${res} == 384) then
 ln -sf ${GRID}/ocean_and_mosaic/* INPUT/
@@ -429,6 +448,7 @@ else
 
 endif
 
+ls -ll INPUT/
 
 cat >! input.nml <<EOF
 
@@ -461,6 +481,7 @@ cat >! input.nml <<EOF
 /
 
  &monin_obukhov_nml
+       ! joseph: to set this to false, compile land_null/land_model.F90 with land2cplr%rough_mom = 0.01
        neutral = .false. ! KGao: should not use true for coupled mode
 /
 
@@ -557,7 +578,7 @@ cat >! input.nml <<EOF
        d2_bg = 0.
        nord =  3  
        dddmp = 0.1
-       d4_bg = 0.14
+       d4_bg = 0.12 ! joseph: changed from 0.14 for the new grid
        vtdm4 = 0.02
        do_vort_damp = .T.
        external_ic = $external_ic
