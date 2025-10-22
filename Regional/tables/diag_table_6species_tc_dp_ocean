@@ -52,9 +52,9 @@
 "ocean_model","speed","speed","ocean","all", .false., "none",2
 
 
-"ocean_model", "uo",  "uo",  "ocean", "all", .false., "none",2
-"ocean_model", "vo",  "vo",  "ocean", "all", .false., "none",2
-"ocean_model", "thetao","thetao","ocean","all", .false., "none",2
+#"ocean_model", "uo",  "uo",  "ocean", "all", .false., "none",2
+#"ocean_model", "vo",  "vo",  "ocean", "all", .false., "none",2
+#"ocean_model", "thetao","thetao","ocean","all", .false., "none",2
 #"ocean_model","SSV","SSV","ocean_hourly","all", "mean", "none",2
 #"ocean_model","SSU","SSU","ocean_hourly","all", "mean", "none",2
 #"ocean_model","SSH","SSH","ocean_hourly","all", "mean", "none",2
@@ -74,7 +74,7 @@
   "ocean_model",   "surface_stokes_x", "surface_stokes_x"    ,   "mixing", "all", "mean", "none", 2
   "ocean_model",   "surface_stokes_y", "surface_stokes_y"    ,   "mixing", "all", "mean", "none", 2
   "ocean_model",   "ustar", "ustar"    ,   "mixing", "all", "mean", "none", 2
-  "ocean_model",   "rsdo", "rsdo"    ,   "mixing", "all", "mean", "none", 2
+#  "ocean_model",   "rsdo", "rsdo"    ,   "mixing", "all", "mean", "none", 2
   "ocean_model",   "net_heat_coupler",  "net_heat_coupler", "mixing", "all", "mean", "none",2
 
 
