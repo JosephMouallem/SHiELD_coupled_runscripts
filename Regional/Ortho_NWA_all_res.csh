@@ -298,6 +298,12 @@ set h = `echo ${NAME} | cut -c10-11`
 set echo
 set curr_date = "${y},${m},${d},${h},0,0"
 
+# specify the start and end time for WW3
+set start_yyyymmdd = `date -u -d "${y}-${m}-${d} ${h}:00:00Z" "+%Y%m%d"`
+set start_hhmmss   = `date -u -d "${y}-${m}-${d} ${h}:00:00Z" "+%H%M%S"`
+set end_yyyymmdd = `date -u -d "${y}-${m}-${d} ${h}:00:00Z +${months} months +${days} days +${hours} hours +${minutes} minutes +${seconds} seconds" "+%Y%m%d"`
+set end_hhmmss   = `date -u -d "${y}-${m}-${d} ${h}:00:00Z +${months} months +${days} days +${hours} hours +${minutes} minutes +${seconds} seconds" "+%H%M%S"`
+
 # build the diag_table with the experiment name and date stamp
 cat >! diag_table << EOF
 ${NAME}.${CASE}.${MODE}.${MONO}
@@ -391,10 +397,74 @@ cat >! MOM_override <<EOF
 ROTATION = "2omegasinlat"
 F_0 = 5.E-5 !about 22.5N
 BETA = 0.0
+#override INIT_LAYERS_FROM_Z_FILE = True
+#override TEMP_SALT_Z_INIT_FILE = ""      ! default = "temp_salt_z.nc"
+#override TEMP_Z_INIT_FILE = "MOM6_IC_${start_yyyymmdd}${h}_C${res}.nc"
+#override SALT_Z_INIT_FILE = "MOM6_IC_${start_yyyymmdd}${h}_C${res}.nc"
+#override Z_INIT_FILE_PTEMP_VAR = "temp" ! default = "ptemp"
+#override Z_INIT_FILE_SALT_VAR = "salt"   ! default = "salt"
+#override Z_INIT_ALE_REMAPPING = True     !   [Boolean] default = False
+#override Z_INIT_REMAP_GENERAL = True     !   [Boolean] default = False
+#override Z_INIT_REMAP_OLD_ALG = False    !   [Boolean] default = True
+#override Z_INIT_REMAP_FULL_COLUMN = True
+#override DEPRESS_INITIAL_SURFACE = True
+#override SURFACE_HEIGHT_IC_FILE = "MOM6_IC_${start_yyyymmdd}${h}_C${res}.nc"
+#override SURFACE_HEIGHT_IC_VAR = "ssh"
+#override VELOCITY_CONFIG = "file"
+#override VELOCITY_FILE = "MOM6_IC_${start_yyyymmdd}${h}_C${res}.nc"
+#override U_IC_VAR = "u"
+#override V_IC_VAR = "v"
+!TEST
+#override DT=90.
+#override DT_THERM=900.
 #override SAVE_INITIAL_CONDS = True
-!!TEST
-#override DT=30.
-#override DT_THERM=30.
+#override REENTRANT_X = False
+#override REENTRANT_Y = False
+#override SAVE_INITIAL_CONDS = True
+#override REENTRANT_X = False
+#override REENTRANT_Y = False
+#override ! === module MOM_open_boundary ===
+#override ! Controls where open boundaries are located, what kind of boundary condition to impose, and what data to apply,
+#override ! if any.
+#override OBC_NUMBER_OF_SEGMENTS = 3      ! default = 0
+#override                                 ! The number of open boundary segments.
+#override OBC_FREESLIP_VORTICITY = False !None
+#override OBC_FREESLIP_STRAIN = False !None
+#override OBC_COMPUTED_VORTICITY = True !None
+#override OBC_COMPUTED_STRAIN = True !None
+#override OBC_ZERO_BIHARMONIC = True !None
+#override OBC_SEGMENT_001 = "J=0,I=0:N,FLATHER,ORLANSKI,NUDGED,ORLANSKI_TAN,NUDGED_TAN" !
+#override                                 ! Documentation needs to be dynamic?????
+#override OBC_SEGMENT_001_VELOCITY_NUDGING_TIMESCALES = 3.0, 360.0 !   [days]
+#override                                 ! Timescales in days for nudging along a segment, for inflow, then outflow.
+#override                                 ! Setting both to zero should behave like SIMPLE obcs for the baroclinic
+#override                                 ! velocities.
+#override OBC_SEGMENT_002 = "J=N,I=N:0,FLATHER,ORLANSKI,NUDGED,ORLANSKI_TAN,NUDGED_TAN" !
+#override                                 ! Documentation needs to be dynamic?????
+#override OBC_SEGMENT_002_VELOCITY_NUDGING_TIMESCALES = 3.0, 360.0 !   [days]
+#override                                 ! Timescales in days for nudging along a segment, for inflow, then outflow.
+#override                                 ! Setting both to zero should behave like SIMPLE obcs for the baroclinic
+#override                                 ! velocities.
+#override OBC_SEGMENT_003 = "I=N,J=0:N,FLATHER,ORLANSKI,NUDGED,ORLANSKI_TAN,NUDGED_TAN" !
+#override                                 ! Documentation needs to be dynamic?????
+#override OBC_SEGMENT_003_VELOCITY_NUDGING_TIMESCALES = 3.0, 360.0 !   [days]
+#override                                 ! Timescales in days for nudging along a segment, for inflow, then outflow.
+#override                                 ! Setting both to zero should behave like SIMPLE obcs for the baroclinic
+#override                                 ! velocities.
+#override OBC_TRACER_RESERVOIR_LENGTH_SCALE_IN = 9000.0 !   [m] default = 0.0
+#override OBC_TRACER_RESERVOIR_LENGTH_SCALE_OUT = 9000.0 !   [m] default = 0.0
+#override                                 ! An effective length scale for restoring the tracer concentration at the
+#override                                 ! boundaries to externally imposed values when the flow is exiting the domain.
+#override BRUSHCUTTER_MODE = True         !   [Boolean] default = False
+#override                                 ! If true, read external OBC data on the supergrid.
+#override! === module MOM_state_initialization ===
+#override OBC_SEGMENT_001_DATA = "U=file:uv_001.nc(u),V=file:uv_001.nc(v),SSH=file:zos_001.nc(zos),TEMP=file:thetao_001.nc(thetao),SALT=file:so_001.nc(so)" !
+#override                                ! OBC segment docs
+#override OBC_SEGMENT_002_DATA = "U=file:uv_002.nc(u),V=file:uv_002.nc(v),SSH=file:zos_002.nc(zos),TEMP=file:thetao_002.nc(thetao),SALT=file:so_002.nc(so)" !
+#override                                ! OBC segment docs
+#override OBC_SEGMENT_003_DATA = "U=file:uv_003.nc(u),V=file:uv_003.nc(v),SSH=file:zos_003.nc(zos),TEMP=file:thetao_003.nc(thetao),SALT=file:so_003.nc(so)" !
+#override                                ! OBC segment docs
+
 
 EOF
 
