@@ -381,9 +381,8 @@ ln -sf ${GRID}/ocean_and_mosaic/* INPUT/
 endif
 #ln -sf ${GRID}/ocean_and_mosaic_highres_3ocn/* INPUT/  # for 1km atm 3km ocn
  
-
-
-
+ln -sf ${BASE_DIR}/MOM_ICs_OBCs/ICs/C${res}/MOM6_IC_${start_yyyymmdd}${h}_C${res}.nc   INPUT/
+ln -sf ${BASE_DIR}/MOM_ICs_OBCs/OBCs/C${res}/${start_yyyymmdd}/*                       INPUT/
 
 cat >! MOM_override <<EOF
 ! Blank file in which we can put "overrides" for parameters
