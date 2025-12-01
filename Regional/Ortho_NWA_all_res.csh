@@ -3,7 +3,7 @@
 #SBATCH --job-name=Ortho_NWA3km_shiemom
 #SBATCH --clusters=c6
 #SBATCH --time=07:30:00
-#SBATCH --nodes=20
+#SBATCH --nodes=105
 
 # Script to run Regional SHiELD+MOM6 over the NWA region
 # accepted resolution: 25km, 6km, 3km, Starting date: Sept, 20, 2024
@@ -19,7 +19,7 @@ set echo
 set res = 384 # 25km
 set res = 738 # 13km
 #set res = 1600 # 6km
-#set res = 3200 # 3km
+set res = 3200 # 3km
 #set res = 9600 # 1km
 ################################
 
@@ -73,8 +73,10 @@ set FIX  = ${INPUT_DATA}/fix.v201810
 set GFS  = ${INPUT_DATA}/GFS_STD_INPUT.20160311.tar
 
 if (${SLURM_CLUSTER_NAME} == "c6") then
-  set ICS = /gpfs/f6/bil-coastal-gfdl/proj-shared/Joseph.Mouallem/shiemom_pdata/INPUT/Regional_validation/NWA_A3km/IC/C${res}/${NAME}_IC/
-  set GRID = /gpfs/f6/bil-coastal-gfdl/proj-shared/Joseph.Mouallem/shiemom_pdata/INPUT/Regional_validation/NWA_A3km/GRID/C${res}/C${res}/
+  #set ICS = /gpfs/f6/bil-coastal-gfdl/proj-shared/Joseph.Mouallem/shiemom_pdata/INPUT/Regional_validation/NWA_A3km/IC/C${res}/${NAME}_IC/
+  #set GRID = /gpfs/f6/bil-coastal-gfdl/proj-shared/Joseph.Mouallem/shiemom_pdata/INPUT/Regional_validation/NWA_A3km/GRID/C${res}/C${res}/
+  set ICS = /gpfs/f6/bil-coastal-gfdl/proj-shared/gfdl_w/SHiELD_INPUT_DATA/Coupled_SHiELD/INPUT/Regional_validation/NWA_A3km/IC/C${res}/${NAME}_IC/
+  set GRID = /gpfs/f6/bil-coastal-gfdl/proj-shared/gfdl_w/SHiELD_INPUT_DATA/Coupled_SHiELD/INPUT/Regional_validation/NWA_A3km/GRID/C${res}/C${res}/
   if (${res} == "9600") then
     set ICS = /gpfs/f6/bil-coastal-gfdl/proj-shared/Joseph.Mouallem/shiemom_pdata/Ortho_Helene/IC/C${res}/${NAME}_IC/
     set GRID = /gpfs/f6/bil-coastal-gfdl/proj-shared/Joseph.Mouallem/shiemom_pdata/Ortho_Helene/my_grids/C${res}/C${res}/ 
@@ -133,8 +135,8 @@ case "3200":
    set k_split = "5"
    set n_split = "8"
    set dt_atmos = "180"
-   set layout_x = "120"
-   set layout_y = "120"
+   set layout_x = "100"
+   set layout_y = "100"
    breaksw
 case "9600":
    set npx = "2391"
@@ -381,8 +383,9 @@ ln -sf ${GRID}/ocean_and_mosaic/* INPUT/
 endif
 #ln -sf ${GRID}/ocean_and_mosaic_highres_3ocn/* INPUT/  # for 1km atm 3km ocn
  
-ln -sf ${BASE_DIR}/MOM_ICs_OBCs/ICs/C${res}/MOM6_IC_${start_yyyymmdd}${h}_C${res}.nc   INPUT/
-ln -sf ${BASE_DIR}/MOM_ICs_OBCs/OBCs/C${res}/${start_yyyymmdd}/*                       INPUT/
+ln -sf ${ICS}/../Ocean_${y}-${m}-${d}.${h}Z_IC/MOM6_IC_${start_yyyymmdd}${h}_C${res}.nc   INPUT/
+ln -sf ${ICS}/../Ocean_${y}-${m}-${d}.${h}Z_IC/${start_yyyymmdd}/*                       INPUT/
+
 
 cat >! MOM_override <<EOF
 ! Blank file in which we can put "overrides" for parameters
