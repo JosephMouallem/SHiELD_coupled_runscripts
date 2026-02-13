@@ -151,7 +151,7 @@ endsw
 #@ NIGLOBAL = 790 #remove the corners
 #@ NJGLOBAL = 756 #remove the corners
 
-set npz = "63"
+set npz = "75"
 set rough = "hwrf17" # hwrf17; coare3.5; beljaars; charnock
 
 # blocking factor used for threading and general physics performance
@@ -497,8 +497,8 @@ cat >! input.nml <<EOF
        na_init =$na_init 
        d_ext = 0.0
        dnats = 2 ! 2019: improved efficiency by not advecting o3
-       fv_sg_adj = 1800 ! 2019: full-domain weak 2dz damping
-       n_sponge = $npz
+       fv_sg_adj = 300 ! 2019: full-domain weak 2dz damping
+       n_sponge = 23
        d2_bg = 0.
        nord =  3  
        dddmp = 0.1
@@ -523,21 +523,29 @@ cat >! input.nml <<EOF
        print_freq = $print_freq
        warm_start = $warm_start
        no_dycore = $no_dycore
-
        rf_fast = .F.
        tau = 5.
        rf_cutoff = 50.e2
-
        delt_max = 0.002
-
        regional = .true.
        bc_update_interval = 6
-
+       full_zs_filter = .true.
 /
 
  &integ_phys_nml
        do_inline_mp = .T.
        do_sat_adj = .F.
+
+/
+ &surf_map_nml
+       zero_ocean = .F.
+       cd4 = 0.12
+       cd2 = -1
+       n_del2_strong = 0
+       n_del2_weak = 2
+       n_del4 = 1
+       max_slope = 0.4
+       peak_fac = 1.
 /
 
  &coupler_nml
