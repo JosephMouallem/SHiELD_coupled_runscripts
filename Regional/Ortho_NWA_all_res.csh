@@ -288,6 +288,9 @@ endif
 @ npes = ${layout_x} * ${layout_y}
 set run_cmd = "srun --label --ntasks=$npes --cpus-per-task=$skip ./$executable:t"
 
+if (${SLURM_CLUSTER_NAME} == "stellar") then
+set run_cmd = "srun --label --ntasks=$npes --export=ALL --cpus-per-task=$skip --cpu-bind=cores ./$executable:t"
+endif
 setenv MPICH_ENV_DISPLAY
 setenv MPICH_MPIIO_CB_ALIGN 2
 setenv MALLOC_MMAP_MAX_ 0
