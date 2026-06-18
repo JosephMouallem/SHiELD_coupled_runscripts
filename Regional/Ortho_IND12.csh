@@ -29,6 +29,12 @@ set BUILD_DIR = "~${USER}/shiemom_clean/SHiELD_build/"                  # Build 
 set INPUT_DATA = "/gpfs/f5/gfdl_w/proj-shared/SHiELD_INPUT_DATA/"
 endif
 
+if (${SLURM_CLUSTER_NAME} == "stellar") then
+set BASE_DIR    = "/scratch/cimes/mouallem/shiemom_runs/test/"
+set BUILD_DIR = "~${USER}/for_jinbo/SHiELD_build/"
+set INPUT_DATA = "/scratch/cimes/mouallem/from_gaea/Coupled_SHiELD/INPUT/"
+endif
+
 unset echo
 source ${BUILD_DIR}/site/environment.intel.csh
 set echo
@@ -73,6 +79,11 @@ set ICS = /gpfs/f5/gfdl_w/scratch/Joseph.Mouallem/Coupled_SHiELD/INPUT/Regional_
 set GRID = /gpfs/f5/gfdl_w/scratch/Joseph.Mouallem/Coupled_SHiELD/INPUT/Regional_validation/IND12/GRID/C${res}/C${res}/ 
 endif
 
+if (${SLURM_CLUSTER_NAME} == "stellar") then
+  set ICS = /scratch/cimes/mouallem/from_gaea/Coupled_SHiELD/INPUT/Regional_validation/IND12/IC/C${res}/${NAME}_IC/
+  set GRID = /scratch/cimes/mouallem/from_gaea/Coupled_SHiELD/INPUT/Regional_validation/IND12/GRID/C${res}/C${res}/
+endif
+
 # sending file to gfdl
 #set gfdl_archive = /archive/${USER}/${RELEASE}/${DATE}.${GRID}.${MEMO}/
 #set SEND_FILE = ${USER}/Util/send_file_slurm.csh
@@ -84,7 +95,7 @@ set FIELD_TABLE = ${RUN_DIR}/tables/field_table_6species_atmland # will be chang
 set layout_x = "18"
 set layout_y = "16"
 set io_layout = "1,1"
-set nthreads = "2"
+set nthreads = "1"
 
 set npx = "994" #halo0
 set npy = "478"
@@ -220,6 +231,9 @@ endif
 @ npes = ${layout_x} * ${layout_y}
 set run_cmd = "srun --label --ntasks=$npes --cpus-per-task=$skip ./$executable:t"
 
+if (${SLURM_CLUSTER_NAME} == "stellar") then
+set run_cmd = "srun --label --ntasks=$npes --export=ALL --cpus-per-task=$skip --cpu-bind=cores ./$executable:t"
+endif
 setenv MPICH_ENV_DISPLAY
 setenv MPICH_MPIIO_CB_ALIGN 2
 setenv MALLOC_MMAP_MAX_ 0
