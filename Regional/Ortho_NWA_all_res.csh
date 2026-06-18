@@ -37,6 +37,13 @@ set BUILD_DIR = "~${USER}/shiemom_clean/SHiELD_build/"                  # Build 
 set INPUT_DATA = "/gpfs/f5/gfdl_w/proj-shared/SHiELD_INPUT_DATA/"
 endif
 
+if (${SLURM_CLUSTER_NAME} == "stellar") then
+set BASE_DIR    = "/scratch/cimes/mouallem/shiemom_runs/test/"
+set BUILD_DIR = "~${USER}/for_jinbo/SHiELD_build/"
+set INPUT_DATA = "/scratch/cimes/mouallem/from_gaea/Coupled_SHiELD/INPUT/"
+endif
+
+
 unset echo
 source ${BUILD_DIR}/site/environment.intel.csh
 set echo
@@ -60,7 +67,7 @@ set NAME = "20240926.00Z"
 endif
 set MEMO = "$SLURM_JOB_NAME.res$res"
 set PBL  = "TKE"        # choices:  TKE or YSU
-set HYPT = "on"         # choices:  on, off  (controls hyperthreading)
+set HYPT = "off"         # choices:  on, off  (controls hyperthreading)
 set COMP = "repro"       # choices:  debug, repro, prod
 set NO_SEND = "no_send"  # choices:  send, no_send
 set EXE = "x"
@@ -88,6 +95,11 @@ set ICS = /gpfs/f5/gfdl_w/scratch/Joseph.Mouallem/UFS_OUT/PRETOOLS/IC/C${res}/${
 set GRID = /gpfs/f5/gfdl_w/scratch/Joseph.Mouallem/UFS_OUT/PRETOOLS/my_grids/C${res}/C${res}/ 
 endif
 
+if (${SLURM_CLUSTER_NAME} == "stellar") then
+  set ICS = /scratch/cimes/mouallem/from_gaea/Coupled_SHiELD/INPUT/Regional_validation/NWA_A3km/IC/C${res}/${NAME}_IC/
+  set GRID = /scratch/cimes/mouallem/from_gaea/Coupled_SHiELD/INPUT/Regional_validation/NWA_A3km/GRID/C${res}/C${res}/
+endif
+
 # sending file to gfdl
 #set gfdl_archive = /archive/${USER}/${RELEASE}/${DATE}.${GRID}.${MEMO}/
 #set SEND_FILE = ${USER}/Util/send_file_slurm.csh
@@ -99,7 +111,7 @@ set FIELD_TABLE = ${RUN_DIR}/tables/field_table_6species_atmland # will be chang
 set layout_x = "18"
 set layout_y = "16"
 set io_layout = "1,1"
-set nthreads = "4"
+set nthreads = "1"
 
 switch ($res) #assuming domain size=10deg, need to adjust timestep, move it here XXXX
 case "384":
@@ -153,7 +165,7 @@ endsw
 #@ NIGLOBAL = 790 #remove the corners
 #@ NJGLOBAL = 756 #remove the corners
 
-set npz = "63"
+set npz = "75"
 set rough = "hwrf17" # hwrf17; coare3.5; beljaars; charnock
 
 # blocking factor used for threading and general physics performance
@@ -645,8 +657,8 @@ cat >! input.nml <<EOF
        na_init =$na_init 
        d_ext = 0.0
        dnats = 2 ! 2019: improved efficiency by not advecting o3
-       fv_sg_adj = 1800 ! 2019: full-domain weak 2dz damping
-       n_sponge = $npz
+       fv_sg_adj = 300 ! 2019: full-domain weak 2dz damping
+       n_sponge = 23
        d2_bg = 0.
        nord =  3  
        dddmp = 0.1
@@ -680,7 +692,7 @@ cat >! input.nml <<EOF
 
        regional = .true.
        bc_update_interval = 6
-
+       full_zs_filter = .true.
 /
 
  &integ_phys_nml
