@@ -327,6 +327,7 @@ cp INPUT/solarconstant_noaa_an.txt .
 ln -sf $Coupled_ocean_ic/glorys_ic_OM4_025_fill_at_the_end.nc INPUT/
 ln -sf $Coupled_ocean_ic/Glorys_lat_extended/glo12_rg_6h-i_20240926-00h_3D-so_lat_extended_filled.nc INPUT/glo12_rg_6h-i_20240926-00h_3D-so_hcst_R20241009.nc
 ln -sf $Coupled_ocean_ic/Glorys_lat_extended/glo12_rg_6h-i_20240926-00h_3D-thetao_lat_extended_filled.nc INPUT/glo12_rg_6h-i_20240926-00h_3D-thetao_hcst_R20241009.nc
+ln -sf $Coupled_ocean_ic/Glorys_lat_extended/SIS2_IC_20260201_C768.nc INPUT/SIS2_IC_20260201_C768.nc
 
 set input_filename = 'n' # for mom6/sis2
 
@@ -353,6 +354,12 @@ cat >! MOM_override <<EOF
 EOF
 
 cat >! SIS_override <<EOF
+CONCENTRATION_INIT_CONFIG = "file"
+ICE_THICKNESS_INIT_CONFIG = "file"
+ICE_CONCENTRATION_FILE = "SIS2_IC_20260201_C768.nc"
+ICE_CONCENTRATION_IC_VAR = "aice"
+ICE_THICKNESS_FILE = "SIS2_IC_20260201_C768.nc"
+ICE_THICKNESS_IC_VAR = "hm"
 EOF
 
 
