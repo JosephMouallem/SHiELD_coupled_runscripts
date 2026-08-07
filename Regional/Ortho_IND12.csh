@@ -1,27 +1,18 @@
 #!/bin/tcsh
 #SBATCH --output=./stdout/%x.%j
-#SBATCH --job-name=Ortho_NWA3km_shiemom
-#SBATCH --clusters=c6
-#SBATCH --time=07:30:00
-#SBATCH --nodes=105
+#SBATCH --job-name=Ortho_IND
+#SBATCH --clusters=stellar
+#SBATCH --time=02:30:00
+#SBATCH --ntasks=1600
+#SBATCH --account=cimes2
 
-# Script to run Regional SHiELD+MOM6 over the NWA region
-# accepted resolution: 25km, 6km, 3km, Starting date: Sept, 20, 2024
-# accepted resolution: 1km, Starting date: Sept 26, 2024
-# The 1km domain is smaller than that of the coarse resolutions
-# increase layout_x _y as needed
+# Script to run Regional SHiELD+MOM6 over the Indian ocean region
+# Adapted from the NWA config
 # Joseph.mouallem@noaa.gov
 
 set echo
 
-# NEEDS TO BE SET
-################################
-set res = 384 # 25km
-set res = 738 # 13km
-#set res = 1600 # 6km
-set res = 3200 # 3km
-#set res = 9600 # 1km
-################################
+set res = 1200
 
 echo "Cluster: $SLURM_CLUSTER_NAME"
 
@@ -40,9 +31,8 @@ endif
 if (${SLURM_CLUSTER_NAME} == "stellar") then
 set BASE_DIR    = "/scratch/cimes/mouallem/shiemom_runs/test/"
 set BUILD_DIR = "~${USER}/for_jinbo/SHiELD_build/"
-set INPUT_DATA = "/scratch/cimes/mouallem/from_gaea/Coupled_SHiELD/INPUT/"
+set INPUT_DATA = "/scratch/cimes/mouallem/SHiELD_INPUT_DATA/Coupled_SHiELD/INPUT/"
 endif
-
 
 unset echo
 source ${BUILD_DIR}/site/environment.intel.csh
@@ -54,17 +44,14 @@ if ( ! $?COMPILER ) then
   set COMPILER = "intel"
 endif
 
-set RELEASE = "SHiEMOM/Ortho_NWA_validation/"
+set RELEASE = "SHiEMOM/Ortho_IND_validation/"
 
 # case specific details
 set TYPE = "nh"          # choices:  nh, hydro
 set MODE = "64bit"      # choices:  32bit, 64bit
 set CASE = "C${res}"
 set MONO = "non-mono"
-set NAME = "20240920.00Z"
-if (${res} == 9600) then
-set NAME = "20240926.00Z"
-endif
+set NAME = "20191026.00Z"
 set MEMO = "$SLURM_JOB_NAME.res$res"
 set PBL  = "TKE"        # choices:  TKE or YSU
 set HYPT = "off"         # choices:  on, off  (controls hyperthreading)
@@ -80,24 +67,20 @@ set FIX  = ${INPUT_DATA}/fix.v201810
 set GFS  = ${INPUT_DATA}/GFS_STD_INPUT.20160311.tar
 
 if (${SLURM_CLUSTER_NAME} == "c6") then
-  #set ICS = /gpfs/f6/bil-coastal-gfdl/proj-shared/Joseph.Mouallem/shiemom_pdata/INPUT/Regional_validation/NWA_A3km/IC/C${res}/${NAME}_IC/
-  #set GRID = /gpfs/f6/bil-coastal-gfdl/proj-shared/Joseph.Mouallem/shiemom_pdata/INPUT/Regional_validation/NWA_A3km/GRID/C${res}/C${res}/
-  set ICS = /gpfs/f6/bil-coastal-gfdl/proj-shared/gfdl_w/SHiELD_INPUT_DATA/Coupled_SHiELD/INPUT/Regional_validation/NWA_A3km/IC/C${res}/${NAME}_IC/
-  set GRID = /gpfs/f6/bil-coastal-gfdl/proj-shared/gfdl_w/SHiELD_INPUT_DATA/Coupled_SHiELD/INPUT/Regional_validation/NWA_A3km/GRID/C${res}/C${res}/
-  if (${res} == "9600") then
-    set ICS = /gpfs/f6/bil-coastal-gfdl/proj-shared/Joseph.Mouallem/shiemom_pdata/Ortho_Helene/IC/C${res}/${NAME}_IC/
-    set GRID = /gpfs/f6/bil-coastal-gfdl/proj-shared/Joseph.Mouallem/shiemom_pdata/Ortho_Helene/my_grids/C${res}/C${res}/ 
-  endif
+  set ICS = /gpfs/f6/bil-coastal-gfdl/proj-shared/Joseph.Mouallem/shiemom_pdata/INPUT/Regional_validation/IND12/IC/C${res}/${NAME}_IC/
+  set GRID = /gpfs/f6/bil-coastal-gfdl/proj-shared/Joseph.Mouallem/shiemom_pdata/INPUT/Regional_validation/IND12/GRID/C${res}/C${res}/
+  set ICS = /gpfs/f6/bil-coastal-gfdl/proj-shared/gfdl_w/SHiELD_INPUT_DATA/Coupled_SHiELD/INPUT/Regional_validation/IND12/IC/C${res}/${NAME}_IC/
+  set GRID = /gpfs/f6/bil-coastal-gfdl/proj-shared/gfdl_w/SHiELD_INPUT_DATA/Coupled_SHiELD/INPUT/Regional_validation/IND12/GRID/C${res}/C${res}/
 endif
 
 if (${SLURM_CLUSTER_NAME} == "c5") then
-set ICS = /gpfs/f5/gfdl_w/scratch/Joseph.Mouallem/UFS_OUT/PRETOOLS/IC/C${res}/${NAME}_IC/
-set GRID = /gpfs/f5/gfdl_w/scratch/Joseph.Mouallem/UFS_OUT/PRETOOLS/my_grids/C${res}/C${res}/ 
+set ICS = /gpfs/f5/gfdl_w/scratch/Joseph.Mouallem/Coupled_SHiELD/INPUT/Regional_validation/IND12/IC/C${res}/${NAME}_IC/
+set GRID = /gpfs/f5/gfdl_w/scratch/Joseph.Mouallem/Coupled_SHiELD/INPUT/Regional_validation/IND12/GRID/C${res}/C${res}/ 
 endif
 
 if (${SLURM_CLUSTER_NAME} == "stellar") then
-  set ICS = /scratch/cimes/mouallem/from_gaea/Coupled_SHiELD/INPUT/Regional_validation/NWA_A3km/IC/C${res}/${NAME}_IC/
-  set GRID = /scratch/cimes/mouallem/from_gaea/Coupled_SHiELD/INPUT/Regional_validation/NWA_A3km/GRID/C${res}/C${res}/
+  set ICS = ${INPUT_DATA}/Regional_validation/IND12/IC/C${res}/${NAME}_IC/
+  set GRID = ${INPUT_DATA}/Regional_validation/IND12/GRID/C${res}/C${res}/
 endif
 
 # sending file to gfdl
@@ -113,59 +96,19 @@ set layout_y = "16"
 set io_layout = "1,1"
 set nthreads = "1"
 
-switch ($res) #assuming domain size=10deg, need to adjust timestep, move it here XXXX
-case "384":
-   set npx = "255" #halo0
-   set npy = "125"
-   set npx = "247" #halo0 NWA_A
-   set npy = "123"
-   set k_split = "1"
-   set n_split = "5"
-   set dt_atmos = "180"
-   breaksw
-case "738":
-   set npx = "483" #halo0
-   set npy = "244"
-   set k_split = "1"
-   set n_split = "8"
-   set dt_atmos = "180"
-   set layout_x = "30"
-   set layout_y = "30"
-   breaksw
-case "1600":
-   set npx = "1057" #halo0
-   set npy = "541"
-   set k_split = "2"
-   set n_split = "8"
-   set dt_atmos = "180"
-   set layout_x = "60"
-   set layout_y = "60"
-   breaksw
-case "3200":
-   set npx = "2124"
-   set npy = "1091"
-   set k_split = "5"
-   set n_split = "8"
-   set dt_atmos = "180"
-   set layout_x = "100"
-   set layout_y = "100"
-   breaksw
-case "9600":
-   set npx = "2391"
-   set npy = "2291"
-   set k_split = "8"
-   set n_split = "10"
-   set dt_atmos = "180"
-   set layout_x = "120"
-   set layout_y = "120"
-endsw
+set npx = "994" #halo0
+set npy = "478"
+set k_split = "2"
+set n_split = "8"
+set dt_atmos = "180"
+set layout_x = "40"
+set layout_y = "40"
 
-@ NIGLOBAL = ${npx} - 1 #remove the corners
-@ NJGLOBAL = ${npy} - 1 #remove the corners
-#@ NIGLOBAL = 790 #remove the corners
-#@ NJGLOBAL = 756 #remove the corners
+#ocean domain
+@ NIGLOBAL = 984 #remove the corners
+@ NJGLOBAL = 486 #remove the corners
 
-set npz = "75"
+set npz = "63"
 set rough = "hwrf17" # hwrf17; coare3.5; beljaars; charnock
 
 # blocking factor used for threading and general physics performance
@@ -173,8 +116,8 @@ set blocksize = "32"
 
 # run length
 set months = "0"
-set days = "9"
-set hours = "1"
+set days = "5"
+set hours = "0"
 set minutes = "0"
 set seconds = "0"
 
@@ -189,7 +132,6 @@ case "YSU":
     set satmedmf = ".false."
     set ysupbl = ".true."
 endsw
-
 
 #fms yaml
 set use_yaml=".F." #if True, requires data_table.yaml and field_table.yaml
@@ -330,16 +272,6 @@ EOF
 #cat ${BUILD_DIR}/tables/diag_table_hwt_simple >> diag_table
 cat ${DIAG_TABLE} >> diag_table
 
-## copy over the other tables and executable
-#if ( ${use_yaml} == ".T." ) then
-#  cp ${BUILD_DIR}/tables/data_table.yaml data_table.yaml
-#  cp ${BUILD_DIR}/tables/field_table_6species.yaml field_table.yaml
-#else
-#  cp ${BUILD_DIR}/tables/data_table data_table
-#  cp ${BUILD_DIR}/tables/field_table_6species field_table
-#endif
-
-
 cp ${RUN_DIR}/data_table data_table
 cp ${FIELD_TABLE} field_table
 cp $executable .
@@ -392,7 +324,7 @@ ln -sf $FIX/global_mxsnoalb.uariz.t1534.3072.1536.rg.grb INPUT/
 cp ${RUN_DIR}/MOMSIS_INPUTFILES/MOM_input .
 cp ${RUN_DIR}/MOMSIS_INPUTFILES/SIS_input .
 ############### copy ocean and mosaic files
-ln -sf ${GRID}/ocean_and_mosaic_highres/* INPUT/
+ln -sf ${GRID}/ocean_and_mosaic_highres_dy_corrected/* INPUT/
 if (${res} == 384) then
 ln -sf ${GRID}/ocean_and_mosaic/* INPUT/
 endif
@@ -414,73 +346,73 @@ cat >! MOM_override <<EOF
 ROTATION = "2omegasinlat"
 F_0 = 5.E-5 !about 22.5N
 BETA = 0.0
-#override INIT_LAYERS_FROM_Z_FILE = True
-#override TEMP_SALT_Z_INIT_FILE = ""      ! default = "temp_salt_z.nc"
-#override TEMP_Z_INIT_FILE = "MOM6_IC_${start_yyyymmdd}${h}_C${res}.nc"
-#override SALT_Z_INIT_FILE = "MOM6_IC_${start_yyyymmdd}${h}_C${res}.nc"
-#override Z_INIT_FILE_PTEMP_VAR = "temp" ! default = "ptemp"
-#override Z_INIT_FILE_SALT_VAR = "salt"   ! default = "salt"
-#override Z_INIT_ALE_REMAPPING = True     !   [Boolean] default = False
-#override Z_INIT_REMAP_GENERAL = True     !   [Boolean] default = False
-#override Z_INIT_REMAP_OLD_ALG = False    !   [Boolean] default = True
-#override Z_INIT_REMAP_FULL_COLUMN = True
-#override DEPRESS_INITIAL_SURFACE = True
-#override SURFACE_HEIGHT_IC_FILE = "MOM6_IC_${start_yyyymmdd}${h}_C${res}.nc"
-#override SURFACE_HEIGHT_IC_VAR = "ssh"
-#override VELOCITY_CONFIG = "file"
-#override VELOCITY_FILE = "MOM6_IC_${start_yyyymmdd}${h}_C${res}.nc"
-#override U_IC_VAR = "u"
-#override V_IC_VAR = "v"
-!TEST
-#override DT=90.
-#override DT_THERM=900.
+!!!#override INIT_LAYERS_FROM_Z_FILE = True
+!!!#override TEMP_SALT_Z_INIT_FILE = ""      ! default = "temp_salt_z.nc"
+!!!#override TEMP_Z_INIT_FILE = "MOM6_IC_${start_yyyymmdd}${h}_C${res}.nc"
+!!!#override SALT_Z_INIT_FILE = "MOM6_IC_${start_yyyymmdd}${h}_C${res}.nc"
+!!!#override Z_INIT_FILE_PTEMP_VAR = "temp" ! default = "ptemp"
+!!!#override Z_INIT_FILE_SALT_VAR = "salt"   ! default = "salt"
+!!!#override Z_INIT_ALE_REMAPPING = True     !   [Boolean] default = False
+!!!#override Z_INIT_REMAP_GENERAL = True     !   [Boolean] default = False
+!!!#override Z_INIT_REMAP_OLD_ALG = False    !   [Boolean] default = True
+!!!#override Z_INIT_REMAP_FULL_COLUMN = True
+!!!#override DEPRESS_INITIAL_SURFACE = True
+!!!#override SURFACE_HEIGHT_IC_FILE = "MOM6_IC_${start_yyyymmdd}${h}_C${res}.nc"
+!!!#override SURFACE_HEIGHT_IC_VAR = "ssh"
+!!!#override VELOCITY_CONFIG = "file"
+!!!#override VELOCITY_FILE = "MOM6_IC_${start_yyyymmdd}${h}_C${res}.nc"
+!!!#override U_IC_VAR = "u"
+!!!#override V_IC_VAR = "v"
+!!!!TEST
+!!!#override DT=90.
+!!!#override DT_THERM=900.
 #override SAVE_INITIAL_CONDS = True
-#override REENTRANT_X = False
-#override REENTRANT_Y = False
-#override SAVE_INITIAL_CONDS = True
-#override REENTRANT_X = False
-#override REENTRANT_Y = False
-#override ! === module MOM_open_boundary ===
-#override ! Controls where open boundaries are located, what kind of boundary condition to impose, and what data to apply,
-#override ! if any.
-#override OBC_NUMBER_OF_SEGMENTS = 3      ! default = 0
-#override                                 ! The number of open boundary segments.
-#override OBC_FREESLIP_VORTICITY = False !None
-#override OBC_FREESLIP_STRAIN = False !None
-#override OBC_COMPUTED_VORTICITY = True !None
-#override OBC_COMPUTED_STRAIN = True !None
-#override OBC_ZERO_BIHARMONIC = True !None
-#override OBC_SEGMENT_001 = "J=0,I=0:N,FLATHER,ORLANSKI,NUDGED,ORLANSKI_TAN,NUDGED_TAN" !
-#override                                 ! Documentation needs to be dynamic?????
-#override OBC_SEGMENT_001_VELOCITY_NUDGING_TIMESCALES = 3.0, 360.0 !   [days]
-#override                                 ! Timescales in days for nudging along a segment, for inflow, then outflow.
-#override                                 ! Setting both to zero should behave like SIMPLE obcs for the baroclinic
-#override                                 ! velocities.
-#override OBC_SEGMENT_002 = "J=N,I=N:0,FLATHER,ORLANSKI,NUDGED,ORLANSKI_TAN,NUDGED_TAN" !
-#override                                 ! Documentation needs to be dynamic?????
-#override OBC_SEGMENT_002_VELOCITY_NUDGING_TIMESCALES = 3.0, 360.0 !   [days]
-#override                                 ! Timescales in days for nudging along a segment, for inflow, then outflow.
-#override                                 ! Setting both to zero should behave like SIMPLE obcs for the baroclinic
-#override                                 ! velocities.
-#override OBC_SEGMENT_003 = "I=N,J=0:N,FLATHER,ORLANSKI,NUDGED,ORLANSKI_TAN,NUDGED_TAN" !
-#override                                 ! Documentation needs to be dynamic?????
-#override OBC_SEGMENT_003_VELOCITY_NUDGING_TIMESCALES = 3.0, 360.0 !   [days]
-#override                                 ! Timescales in days for nudging along a segment, for inflow, then outflow.
-#override                                 ! Setting both to zero should behave like SIMPLE obcs for the baroclinic
-#override                                 ! velocities.
-#override OBC_TRACER_RESERVOIR_LENGTH_SCALE_IN = 9000.0 !   [m] default = 0.0
-#override OBC_TRACER_RESERVOIR_LENGTH_SCALE_OUT = 9000.0 !   [m] default = 0.0
-#override                                 ! An effective length scale for restoring the tracer concentration at the
-#override                                 ! boundaries to externally imposed values when the flow is exiting the domain.
-#override BRUSHCUTTER_MODE = True         !   [Boolean] default = False
-#override                                 ! If true, read external OBC data on the supergrid.
-#override! === module MOM_state_initialization ===
-#override OBC_SEGMENT_001_DATA = "U=file:uv_001.nc(u),V=file:uv_001.nc(v),SSH=file:zos_001.nc(zos),TEMP=file:thetao_001.nc(thetao),SALT=file:so_001.nc(so)" !
-#override                                ! OBC segment docs
-#override OBC_SEGMENT_002_DATA = "U=file:uv_002.nc(u),V=file:uv_002.nc(v),SSH=file:zos_002.nc(zos),TEMP=file:thetao_002.nc(thetao),SALT=file:so_002.nc(so)" !
-#override                                ! OBC segment docs
-#override OBC_SEGMENT_003_DATA = "U=file:uv_003.nc(u),V=file:uv_003.nc(v),SSH=file:zos_003.nc(zos),TEMP=file:thetao_003.nc(thetao),SALT=file:so_003.nc(so)" !
-#override                                ! OBC segment docs
+!!!#override REENTRANT_X = False
+!!!#override REENTRANT_Y = False
+!!!#override SAVE_INITIAL_CONDS = True
+!!!#override REENTRANT_X = False
+!!!#override REENTRANT_Y = False
+!!!#override ! === module MOM_open_boundary ===
+!!!#override ! Controls where open boundaries are located, what kind of boundary condition to impose, and what data to apply,
+!!!#override ! if any.
+!!!#override OBC_NUMBER_OF_SEGMENTS = 3      ! default = 0
+!!!#override                                 ! The number of open boundary segments.
+!!!#override OBC_FREESLIP_VORTICITY = False !None
+!!!#override OBC_FREESLIP_STRAIN = False !None
+!!!#override OBC_COMPUTED_VORTICITY = True !None
+!!!#override OBC_COMPUTED_STRAIN = True !None
+!!!#override OBC_ZERO_BIHARMONIC = True !None
+!!!#override OBC_SEGMENT_001 = "J=0,I=0:N,FLATHER,ORLANSKI,NUDGED,ORLANSKI_TAN,NUDGED_TAN" !
+!!!#override                                 ! Documentation needs to be dynamic?????
+!!!#override OBC_SEGMENT_001_VELOCITY_NUDGING_TIMESCALES = 3.0, 360.0 !   [days]
+!!!#override                                 ! Timescales in days for nudging along a segment, for inflow, then outflow.
+!!!#override                                 ! Setting both to zero should behave like SIMPLE obcs for the baroclinic
+!!!#override                                 ! velocities.
+!!!#override OBC_SEGMENT_002 = "J=N,I=N:0,FLATHER,ORLANSKI,NUDGED,ORLANSKI_TAN,NUDGED_TAN" !
+!!!#override                                 ! Documentation needs to be dynamic?????
+!!!#override OBC_SEGMENT_002_VELOCITY_NUDGING_TIMESCALES = 3.0, 360.0 !   [days]
+!!!#override                                 ! Timescales in days for nudging along a segment, for inflow, then outflow.
+!!!#override                                 ! Setting both to zero should behave like SIMPLE obcs for the baroclinic
+!!!#override                                 ! velocities.
+!!!#override OBC_SEGMENT_003 = "I=N,J=0:N,FLATHER,ORLANSKI,NUDGED,ORLANSKI_TAN,NUDGED_TAN" !
+!!!#override                                 ! Documentation needs to be dynamic?????
+!!!#override OBC_SEGMENT_003_VELOCITY_NUDGING_TIMESCALES = 3.0, 360.0 !   [days]
+!!!#override                                 ! Timescales in days for nudging along a segment, for inflow, then outflow.
+!!!#override                                 ! Setting both to zero should behave like SIMPLE obcs for the baroclinic
+!!!#override                                 ! velocities.
+!!!#override OBC_TRACER_RESERVOIR_LENGTH_SCALE_IN = 9000.0 !   [m] default = 0.0
+!!!#override OBC_TRACER_RESERVOIR_LENGTH_SCALE_OUT = 9000.0 !   [m] default = 0.0
+!!!#override                                 ! An effective length scale for restoring the tracer concentration at the
+!!!#override                                 ! boundaries to externally imposed values when the flow is exiting the domain.
+!!!#override BRUSHCUTTER_MODE = True         !   [Boolean] default = False
+!!!#override                                 ! If true, read external OBC data on the supergrid.
+!!!#override! === module MOM_state_initialization ===
+!!!#override OBC_SEGMENT_001_DATA = "U=file:uv_001.nc(u),V=file:uv_001.nc(v),SSH=file:zos_001.nc(zos),TEMP=file:thetao_001.nc(thetao),SALT=file:so_001.nc(so)" !
+!!!#override                                ! OBC segment docs
+!!!#override OBC_SEGMENT_002_DATA = "U=file:uv_002.nc(u),V=file:uv_002.nc(v),SSH=file:zos_002.nc(zos),TEMP=file:thetao_002.nc(thetao),SALT=file:so_002.nc(so)" !
+!!!#override                                ! OBC segment docs
+!!!#override OBC_SEGMENT_003_DATA = "U=file:uv_003.nc(u),V=file:uv_003.nc(v),SSH=file:zos_003.nc(zos),TEMP=file:thetao_003.nc(thetao),SALT=file:so_003.nc(so)" !
+!!!#override                                ! OBC segment docs
 
 
 EOF
@@ -660,8 +592,8 @@ cat >! input.nml <<EOF
        na_init =$na_init 
        d_ext = 0.0
        dnats = 2 ! 2019: improved efficiency by not advecting o3
-       fv_sg_adj = 300 ! 2019: full-domain weak 2dz damping
-       n_sponge = 23
+       fv_sg_adj = 1800 ! 2019: full-domain weak 2dz damping
+       n_sponge = $npz
        d2_bg = 0.
        nord =  3  
        dddmp = 0.1
@@ -695,7 +627,7 @@ cat >! input.nml <<EOF
 
        regional = .true.
        bc_update_interval = 6
-       full_zs_filter = .true.
+
 /
 
  &integ_phys_nml

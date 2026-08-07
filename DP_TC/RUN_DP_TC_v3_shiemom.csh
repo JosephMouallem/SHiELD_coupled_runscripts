@@ -32,10 +32,10 @@ endif
 
 
 if (${SLURM_CLUSTER_NAME} == "stellar") then
-set BASE_DIR    = "/scratch/cimes/mouallem/shiemom_runs/"
-set BUILD_DIR = "~${USER}/test/newcode/SHiELD_build/"
-set INPUT_DATA = "/scratch/cimes/mouallem/from_gaea/TEMP_INPUT/"
-set MOSAIC_DATA = "/scratch/cimes/mouallem/from_gaea/shiemom_pdata/INPUT/"
+set BASE_DIR    = "/scratch/cimes/mouallem/shiemom_runs/test/"
+set BUILD_DIR = "~${USER}/shiemom_clean/SHiELD_build/"
+set INPUT_DATA = "/scratch/cimes/mouallem/from_gaea/Coupled_SHiELD/TEMP_INPUT/"
+set MOSAIC_DATA = "/scratch/cimes/mouallem/from_gaea/Coupled_SHiELD/INPUT/"
 endif
 
 unset echo
@@ -64,14 +64,10 @@ set GRID = "DP"
 set CASE = "TC"
 set DATE = "20240920.00Z" 
 set PBL  = "YSU"        # choices:  TKE or YSU
-set HYPT = "on"         # choices:  on, off  (controls hyperthreading)
+set HYPT = "off"         # choices:  on, off  (controls hyperthreading)
 set COMP = "repro"       # choices:  debug, repro, prod
 set NO_SEND = "no_send" # choices:  send, no_send
 set EXE  = "intel.x"
-
-if (${SLURM_CLUSTER_NAME} == "stellar") then
-  set HYPT = "on"         # choices:  on, off  (controls hyperthreading)
-endif
 
 # directory structure
 set WORKDIR    = ${BASE_DIR}/${RELEASE}/${DATE}.${CASE}.${TYPE}.${MODE}.${MONO}.${MEMO}/
@@ -113,7 +109,7 @@ set npz = "50"
 set layout_x = "30" 
 set layout_y = "30" 
 set io_layout = "1,1"
-set nthreads = "2"
+set nthreads = "1"
 
 # time step parameters
 set n_split = "5"
