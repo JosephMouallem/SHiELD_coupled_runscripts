@@ -305,7 +305,7 @@ cp INPUT/solarconstant_noaa_an.txt .
 ###########################################################################
 ###########################################################################
 
-  set MOM_INPUT_DIR = "$Coupled_mosaic/../om5-config/OM5/"
+  set MOM_INPUT_DIR = "$Coupled_mosaic/../om5-config-b13/OM5/"
   cp $MOM_INPUT_DIR/MOM_* .
   cp $MOM_INPUT_DIR/SIS_* .
 
@@ -314,14 +314,14 @@ cp INPUT/solarconstant_noaa_an.txt .
   ln -sf $MOM_INPUT_DIR/INPUT/hycom1_75_800m.nc INPUT/
   ln -sf $MOM_INPUT_DIR/INPUT/woa13_decav_ptemp_monthly_fulldepth_01.nc INPUT/
   ln -sf $MOM_INPUT_DIR/INPUT/woa13_decav_s_monthly_fulldepth_01.nc INPUT/
-  ln -sf $MOM_INPUT_DIR/INPUT/tidal_amplitude_v20240410.nc INPUT/
+  ln -sf $MOM_INPUT_DIR/INPUT/tidal_amplitude_v20250916.nc INPUT/
   ln -sf $MOM_INPUT_DIR/INPUT/ocean_topog.nc INPUT/
   ln -sf $MOM_INPUT_DIR/INPUT/topog.nc INPUT/
-  ln -sf $MOM_INPUT_DIR/INPUT/geothermal_davies2013_v1_v20240410.nc INPUT/
+  ln -sf $MOM_INPUT_DIR/INPUT/geothermal_davies2013_v1_v20250916.nc INPUT/
   ln -sf $MOM_INPUT_DIR/INPUT/diag_z3.nc INPUT/
   ln -sf $MOM_INPUT_DIR/INPUT/diag_rho2_74layer.nc INPUT/
   ln -sf $MOM_INPUT_DIR/INPUT/diag_rho0_60layer.nc INPUT/
-  ln -sf $MOM_INPUT_DIR/INPUT/seawifs-clim-1997-2010_v20240410.nc INPUT/
+  ln -sf $MOM_INPUT_DIR/INPUT/seawifs-clim-1997-2010_v20250916.nc INPUT/
 
 set input_filename = 'n' # for mom6/sis2
 
@@ -450,6 +450,7 @@ cat >! input.nml <<EOF
 /
 
 &diag_manager_nml
+     !flush_nc_files = .false. ! If .true., files will be filled by data each time they are written to (model will be slightly less efficient)
     prepend_date = .F.
     max_num_axis_sets = 100 
     max_files = 100
