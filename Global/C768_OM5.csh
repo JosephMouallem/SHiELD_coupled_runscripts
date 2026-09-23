@@ -233,13 +233,14 @@ if (${RESTART_RUN} == "F") then
   set external_ic = ".T."
   set warm_start = ".F."
 
+   set input_filename = 'n' # for mom6 and sis2
 else
 
   cd $WORKDIR/rundir
   \rm -rf INPUT/*
 
   # move the restart data into INPUT/
-  mv ${RESTART}/* INPUT/.
+  mv RESTART/* INPUT/.
 
   # reset values in input.nml for restart run
   set make_nh = ".F."
@@ -248,6 +249,7 @@ else
   set external_ic = ".F."
   set warm_start = ".T."
   set na_init = 0
+   set input_filename = 'r' # for mom6 and sis2
 
 endif
 
@@ -323,7 +325,6 @@ cp INPUT/solarconstant_noaa_an.txt .
   ln -sf $MOM_INPUT_DIR/INPUT/diag_rho0_60layer.nc INPUT/
   ln -sf $MOM_INPUT_DIR/INPUT/seawifs-clim-1997-2010_v20250916.nc INPUT/
 
-set input_filename = 'n' # for mom6/sis2
 
 #MOM6 and SIS2 ICS
 ####################
@@ -620,7 +621,7 @@ cat >! input.nml <<EOF
        isot           = 1
        ysupbl         = .false.
        satmedmf       = .true.
-       isatmedmf      = 0
+       isatmedmf      = 1
        rlmx           = 500.0
        do_dk_hb19     = .false.
        xkzminv        = 0.0

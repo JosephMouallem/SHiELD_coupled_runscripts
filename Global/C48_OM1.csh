@@ -102,6 +102,7 @@ set dt_therm = "900"  # for ocean
 set use_yaml=".F." #if True, requires data_table.yaml and field_table.yaml
 
 set na_init = 1
+set na_init = 0
 set rough = "hwrf17" # hwrf17; coare3.5; beljaars; charnock
 
 # variables for controlling initialization of NCEP/NGGPS ICs
@@ -197,6 +198,7 @@ setenv MALLOC_TRIM_THRESHOLD_ 536870912
 setenv NC_BLKSZ 1M
 # necessary for OpenMP when using Intel
 setenv KMP_STACKSIZE 256m
+setenv FI_CXI_RX_MATCH_MODE software
 
 if (${RESTART_RUN} == "F") then
   \rm -rf $WORKDIR/rundir
@@ -219,13 +221,14 @@ if (${RESTART_RUN} == "F") then
   set external_ic = ".T."
   set warm_start = ".F."
 
+   set input_filename = 'n' # for mom6 and sis2
 else
 
   cd $WORKDIR/rundir
   \rm -rf INPUT/*
 
   # move the restart data into INPUT/
-  mv ${RESTART}/* INPUT/.
+  mv RESTART/* INPUT/.
 
   # reset values in input.nml for restart run
   set make_nh = ".F."
@@ -234,6 +237,7 @@ else
   set external_ic = ".F."
   set warm_start = ".T."
   set na_init = 0
+   set input_filename = 'r' # for mom6 and sis2
 
 endif
 
@@ -314,7 +318,7 @@ if ( ${ocean_mod} == "real" ) then # same as OM1_deg
   ln -sf /gpfs/f6/bil-coastal-gfdl/proj-shared/Joseph.Mouallem/shiemom_pdata/GLOBAL/C48_1deg/ocean_hgrid.nc INPUT/
 endif
 
-set input_filename = 'n' # for mom6/sis2
+#set input_filename = 'n' # for mom6/sis2
 
 cat >! MOM_override <<EOF
 #override DT=${dt_atmos}
