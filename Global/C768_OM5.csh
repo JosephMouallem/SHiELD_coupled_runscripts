@@ -3,9 +3,10 @@
 #SBATCH --job-name=Global_shiemom
 #SBATCH --clusters=c6
 #SBATCH --time=07:30:00
-#SBATCH --nodes=106
+#SBATCH --ntasks=6144
+#SBATCH --nodes=32
 
-# Script to run a global C48 SHiELD + 1deg MOM6
+# Script to run a global C768 SHiELD + 0.25deg OM5
 # Joseph.mouallem@noaa.gov
 
 set echo
@@ -91,8 +92,8 @@ set FIELD_TABLE = ${RUN_DIR}/tables/field_table_6species_atmland # will be chang
 set npx = "769"
 set npy = "769"
 set npz = "91"
-set layout_x = "30"
-set layout_y = "30"
+set layout_x = "32"
+set layout_y = "32"
 set io_layout = "1,1"
 set nthreads = "1"
 
@@ -157,8 +158,8 @@ if (${TYPE} == "nh") then
   set use_hydro_pressure = ".F."   # can be tested
   set consv_te = "1."
     # time step parameters in FV3
-  set k_split = "2"
-  set n_split = "6"
+  set k_split = "1"
+  set n_split = "8"
 else
   # hydrostatic options
   set make_nh = ".F."
@@ -612,21 +613,20 @@ cat >! input.nml <<EOF
        random_clds    = .false.
        trans_trac     = .true.
        cnvcld         = .false.
-       imfshalcnv     = 3
-       imfdeepcnv     = 3
-       limit_shal_conv = .true.
-       cdmbgwd        = 5.0, 0.25
+       imfshalcnv     = 2 
+       imfdeepcnv     = 2
+       cdmbgwd        = 3.5, 0.25
        prslrd0        = 0.
        ivegsrc        = 1
        isot           = 1
        ysupbl         = .false.
        satmedmf       = .true.
-       isatmedmf      = 1
+       isatmedmf      = 1 ! use 1 for implicit land coupling; SHiELD v2022 uses 0
        rlmx           = 500.0
        do_dk_hb19     = .false.
        xkzminv        = 0.0
-       xkzm_m         = 0.5
-       xkzm_h         = 0.5
+       xkzm_m         = 1.5
+       xkzm_h         = 1.5
        xkzm_ml        = 1.0
        xkzm_hl        = 1.0
        xkzm_mi        = 1.5
@@ -636,12 +636,6 @@ cat >! input.nml <<EOF
        do_ocean       = .false.
        do_sat_adj     = .false.
        do_z0_hwrf17_hwonly = .true.
-       dxcrtas        = 1.e3
-       c0s_deep       = 0.002
-       c1_deep        = 0.002
-       c0s_shal       = 0.002
-       c1_shal        = 0.002
-       scale_awareness_factor = 2.0
 /
 
 
@@ -652,7 +646,6 @@ cat >! input.nml <<EOF
        vg_max = 12.
        vr_max = 12.
        prog_ccn = .true.
-       prog_cin = .true.
        tau_l2v = 225.
        dw_land = 0.16
        dw_ocean = 0.10
