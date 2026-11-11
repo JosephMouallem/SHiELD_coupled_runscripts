@@ -25,6 +25,12 @@ set res = 3200 # 3km
 
 echo "Cluster: $SLURM_CLUSTER_NAME"
 
+if (${SLURM_CLUSTER_NAME} == "c7") then
+set BASE_DIR    = "/gpfs/f7/bil-coastal-gfdl/scratch/Joseph.Mouallem/"           # Sim/work directory - to be set
+set BUILD_DIR = "~${USER}/c7/SHiELD_build/"                  # Build directory - To be set
+set INPUT_DATA = "/gpfs/f7/bil-coastal-gfdl/world-shared/SHiELD_INPUT_DATA/"
+endif
+
 if (${SLURM_CLUSTER_NAME} == "c6") then
 set BASE_DIR    = "/gpfs/f6/bil-coastal-gfdl/scratch/Joseph.Mouallem/"           # Sim/work directory - to be set
 set BUILD_DIR = "~${USER}/shiemom_clean/SHiELD_build/"                  # Build directory - To be set
@@ -88,6 +94,11 @@ if (${SLURM_CLUSTER_NAME} == "c6") then
   #  set ICS = /gpfs/f6/bil-coastal-gfdl/proj-shared/Joseph.Mouallem/shiemom_pdata/Ortho_Helene/IC/C${res}/${NAME}_IC/
   #  set GRID = /gpfs/f6/bil-coastal-gfdl/proj-shared/Joseph.Mouallem/shiemom_pdata/Ortho_Helene/my_grids/C${res}/C${res}/ 
   #endif
+endif
+
+if (${SLURM_CLUSTER_NAME} == "c7") then
+  set ICS = /gpfs/f7/bil-coastal-gfdl/world-shared/SHiELD_INPUT_DATA/Coupled_SHiELD/INPUT/Regional_validation/NWA_A3km/IC/C${res}/${NAME}_IC/
+  set GRID = /gpfs/f7/bil-coastal-gfdl/world-shared/SHiELD_INPUT_DATA/Coupled_SHiELD/INPUT/Regional_validation/NWA_A3km/GRID/C${res}/C${res}/
 endif
 
 if (${SLURM_CLUSTER_NAME} == "c5") then
@@ -212,7 +223,7 @@ set n_zs_filter_nest = "1"
 set fdiag = "1."
 set fhzer = "1."
 set fhcyc = "24."
-set fhcyc = "0."
+#set fhcyc = "0."
 
 # determines whether FV3 or GFS physics calculate geopotential
 set gfs_phil = ".false."
