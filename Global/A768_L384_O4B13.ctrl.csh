@@ -6,8 +6,8 @@
 #SBATCH --nodes=50
 #SBATCH --exclusive
 #SBATCH --account=bil-coastal-gfdl
-#SBATCH --mail-user=joseph.mouallem@noaa.gov
-#SBATCH --mail-type=ALL
+##SBATCH --mail-user=joseph.mouallem@noaa.gov
+##SBATCH --mail-type=ALL
 ##SBATCH --export=CLU=c6,DAYS=9,NAME=20240926.00Z,MEMO=LM4,LX=32,LY=32,NT=1,ALL
 
 # Script to run the fully coupled SHiELD atmosphere-land-ocean-sea ice model.
