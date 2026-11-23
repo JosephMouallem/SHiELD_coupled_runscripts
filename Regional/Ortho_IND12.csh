@@ -12,7 +12,9 @@
 
 set echo
 
-set res = 1200
+# Choose atm resolution
+set res = 1200 # 8km
+#set res = 3200 # 3km
 
 echo "Cluster: $SLURM_CLUSTER_NAME"
 
@@ -96,11 +98,22 @@ set layout_y = "16"
 set io_layout = "1,1"
 set nthreads = "1"
 
-set npx = "994" #halo0
-set npy = "478"
-set k_split = "2"
-set n_split = "8"
-set dt_atmos = "180"
+if (${res} == "1200") then
+  set npx = "994" #halo0
+  set npy = "478"
+  set k_split = "2"
+  set n_split = "8"
+  set dt_atmos = "180"
+endif
+if (${res} == "3200") then
+  set npx = "2634" #halo0
+  set npy = "1257"
+  set k_split = "3"
+  set n_split = "8"
+  set dt_atmos = "90"
+endif
+
+
 set layout_x = "40"
 set layout_y = "40"
 
